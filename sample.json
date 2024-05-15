@@ -1,0 +1,4781 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "test-internal-api.ibinder.com/api/documents",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://test-internal-api.ibinder.com/api/documents"
+    }
+  ],
+  "paths": {
+    "/annotations/migrate": {
+      "post": {
+        "tags": [
+          "AnnotationMigrations"
+        ],
+        "operationId": "Sync_Document_Annotations",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/annotations/migrate/{documentVersionId}": {
+      "post": {
+        "tags": [
+          "AnnotationMigrations"
+        ],
+        "operationId": "Sync_Specific_Document_Annotations",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{documentVersionId}/annotations": {
+      "get": {
+        "tags": [
+          "Annotations"
+        ],
+        "operationId": "Get_Document_Annotations",
+        "parameters": [
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Annotation"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Annotation"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Annotation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Annotations"
+        ],
+        "operationId": "Create_document_annotation",
+        "parameters": [
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{documentVersionId}/annotations/{annotationId}": {
+      "put": {
+        "tags": [
+          "Annotations"
+        ],
+        "operationId": "Update_document_annotation",
+        "parameters": [
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "annotationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Annotation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Annotations"
+        ],
+        "operationId": "Delete_document_annotation",
+        "parameters": [
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "annotationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Annotation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{documentVersionId}/annotations/{annotationId}/mentions": {
+      "post": {
+        "tags": [
+          "Annotations"
+        ],
+        "operationId": "Send_mention_for_annotation",
+        "parameters": [
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "annotationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Mention"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Mention"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Mention"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Get_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Update_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Document"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Document"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Document"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Delete_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/list": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Get_Multiple_Documents",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListDocumentsRequestParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListDocumentsRequestParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListDocumentsRequestParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListItem"
+                  }
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Search_Documents",
+        "parameters": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "modifiedSince",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "onlyTabDocuments",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchParameters"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchParameters"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchParameters"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentsSearchPagedModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentsSearchPagedModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentsSearchPagedModel"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentsSearchPagedModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/publiclink": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Add_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Remove_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/copy": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyInput"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyInput"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopyResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopyResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopyResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/metadata": {
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Update_Document_Metadata",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/removemetadata": {
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Remove_Document_Metadata",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Metadata"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/checkout": {
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Checkout_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckDocumentInput"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckDocumentInput"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckDocumentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/checkin": {
+      "put": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "Checkin_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Get_Document_Setting",
+        "parameters": [
+          {
+            "name": "documentType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Create_Document_Setting",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Update_Document_Setting",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSetting"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/{id}": {
+      "get": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Get_Document_Setting_By_Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Delete_Document_Setting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSetting"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/all": {
+      "get": {
+        "tags": [
+          "DocumentSetting"
+        ],
+        "operationId": "Get_All_Tenants_Document_Setting",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSetting"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSetting"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSetting"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/printorder": {
+      "post": {
+        "tags": [
+          "DocumentsPrint"
+        ],
+        "operationId": "Prepare_Print_Order",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrintOrderParameters"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrintOrderParameters"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrintOrderParameters"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrintOrder"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrintOrder"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrintOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Index/Search/teardownbuildup": {
+      "get": {
+        "tags": [
+          "DocumentsSearch"
+        ],
+        "parameters": [
+          {
+            "name": "indexName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/move": {
+      "post": {
+        "tags": [
+          "DocumentsSupport"
+        ],
+        "operationId": "Move_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "destinationTabId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "destinationBinderId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/copy": {
+      "post": {
+        "tags": [
+          "DocumentsSupport"
+        ],
+        "operationId": "Copy_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyDocumentParameters"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyDocumentParameters"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyDocumentParameters"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cleanupmissingdocuments": {
+      "post": {
+        "tags": [
+          "DocumentsSupport"
+        ],
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mergedocuments": {
+      "post": {
+        "tags": [
+          "DocumentsSupport"
+        ],
+        "parameters": [
+          {
+            "name": "mergeFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mergeInto",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/support/additionalfiles": {
+      "post": {
+        "tags": [
+          "DocumentsSupport"
+        ],
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentIdsWithTenant"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentIdsWithTenant"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentIdsWithTenant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentWithVersions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zip/{id}": {
+      "get": {
+        "tags": [
+          "DocumentsZip"
+        ],
+        "operationId": "Get_Zip_Info",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZipInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZipInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZipInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zip": {
+      "get": {
+        "tags": [
+          "DocumentsZip"
+        ],
+        "operationId": "Get_Zip",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "filename",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadZipFileResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadZipFileResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadZipFileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DocumentsZip"
+        ],
+        "operationId": "Start_Zip_Documents",
+        "parameters": [
+          {
+            "name": "notificationLanguage",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "en"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZipFile"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZipFile"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZipFile"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateZipFileResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateZipFileResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateZipFileResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    },
+    "/{documentId}/tags": {
+      "put": {
+        "tags": [
+          "DocumentTags"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DocumentTag"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DocumentTag"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DocumentTag"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Metadata"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Metadata"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Metadata"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/versions": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Get_Document_Versions",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Get_Document_Version",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Update_Document_Version",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentVersion"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentVersion"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentVersion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Delete_Document_Version",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/list": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "List_Document_Versions",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentVersion"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/metadata": {
+      "put": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Update_Document_Version_Metadata",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Metadata"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Metadata"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Metadata"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/raw/download": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Download_Raw_Document_Version",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/raw": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Get_Document_Version_Raw",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/preview/download": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Download_Document_Version_Preview",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/preview": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Get_Document_Version_Preview",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/{documentId}/versions/{versionId}/issue/{issueId}/thumb": {
+      "get": {
+        "tags": [
+          "DocumentVersions"
+        ],
+        "operationId": "Get_Issue_Drawing_Thumb",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issueId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/public/{documentId}": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Get_Document_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/public/{documentId}/version/current": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Get_Document_Version_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/public/{documentId}/version/current/raw/download": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Download_Raw_Document_Version_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/public/{documentId}/version/current/raw": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Get_Document_Version_Raw_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/public/{documentId}/version/current/preview/download": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Download_Document_Version_Preview_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/public/{documentId}/version/current/preview": {
+      "get": {
+        "tags": [
+          "PublicDocuments"
+        ],
+        "operationId": "Get_Document_Version_Preview_Public_Link",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads": {
+      "get": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Get_Uploads",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Create_Upload",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads/{id}": {
+      "get": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Get_Upload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Update_Upload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Delete_Upload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads/{id}/listitem": {
+      "get": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Get_Upload_DocumentListItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListItem"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/metadata": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Metadata_Upload",
+        "parameters": [
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Upload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads/binder/{binderId}/tabs/uploadfromzip/{uploadId}": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Upload_ZIP_To_Root",
+        "parameters": [
+          {
+            "name": "binderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tabId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "uploadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads/binder/{binderId}/tabs/{tabId}/uploadfromzip/{uploadId}": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Upload_ZIP",
+        "parameters": [
+          {
+            "name": "binderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tabId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "uploadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/uploads/tender/{tenderId}/version/{versionId}/tabs/{tabId}/uploadfromzip/{uploadId}": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "operationId": "Upload_ZIP_Tender",
+        "parameters": [
+          {
+            "name": "tenderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tabId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "uploadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-ibinder-tenantid",
+            "in": "header",
+            "description": "The tenant id (guid)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Annotation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "xfdf": {
+            "type": "string",
+            "nullable": true
+          },
+          "annotationContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdByUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inReplyToAnnotation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BinderTypeEnum": {
+        "enum": [
+          "Project",
+          "Facility",
+          "Procurement",
+          "Organization",
+          "Assignment",
+          "Selection",
+          "UnsupportedBinderType"
+        ],
+        "type": "string"
+      },
+      "CheckDocumentInput": {
+        "type": "object",
+        "properties": {
+          "isHardLock": {
+            "type": "boolean"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopyDocumentParameters": {
+        "type": "object",
+        "properties": {
+          "sourceTabId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationTabId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceBinderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationBinderId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopyDocumentsFilter": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "into": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopyInput": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/MoveFromTo"
+          },
+          "to": {
+            "$ref": "#/components/schemas/MoveFromTo"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CopyDocumentsFilter"
+            },
+            "nullable": true
+          },
+          "copyAllVersions": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopyResourceModel": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopyResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentWithVersions"
+            },
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Country": {
+        "enum": [
+          "se",
+          "fi",
+          "no",
+          "dk",
+          "gb",
+          "nl",
+          "at",
+          "pl",
+          "lt",
+          "sk",
+          "fo"
+        ],
+        "type": "string"
+      },
+      "CreateZipFile": {
+        "required": [
+          "documents"
+        ],
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateZipFileDocumentItem"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateZipFileDocumentItem": {
+        "required": [
+          "id",
+          "versionId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "versionNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateZipFileResponse": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeliveryMethod": {
+        "enum": [
+          "PersonalDelivery",
+          "RegularMail"
+        ],
+        "type": "string"
+      },
+      "DeliveryOption": {
+        "enum": [
+          "Standard",
+          "Express"
+        ],
+        "type": "string"
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "securityContext": {
+            "$ref": "#/components/schemas/SecurityContext"
+          },
+          "publicLink": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentBinder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/BinderTypeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentData": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentVersionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentIdPair": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentVersionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentIdsWithTenant": {
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentId": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "documentMetadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "documentVersionMetadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "files": {
+            "$ref": "#/components/schemas/FileCollection"
+          },
+          "documentVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currentVersion": {
+            "type": "boolean"
+          },
+          "versionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "binders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentBinder"
+            },
+            "nullable": true
+          },
+          "securityContext": {
+            "$ref": "#/components/schemas/SecurityContext"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentSetting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultView": {
+            "$ref": "#/components/schemas/DocumentView"
+          },
+          "tenantSpecific": {
+            "type": "boolean"
+          },
+          "groupByMetadataElement": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadataRequiredForUpload": {
+            "$ref": "#/components/schemas/MetadataRequiredForUploadDefinition"
+          },
+          "metadataUsedForDisplay": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataUsedForDisplayDefinition"
+            },
+            "nullable": true
+          },
+          "versionType": {
+            "$ref": "#/components/schemas/VersionTypes"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentTag": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "files": {
+            "$ref": "#/components/schemas/FileCollection"
+          },
+          "published": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentView": {
+        "enum": [
+          "Table",
+          "Card",
+          "Gallery",
+          "Preview"
+        ],
+        "type": "string"
+      },
+      "DocumentWithVersionIds": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentWithVersions": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/Document"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentVersion"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentsSearchPagedModel": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentListItem"
+            },
+            "nullable": true
+          },
+          "firstPage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "readOnly": true
+          },
+          "lastPage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "readOnly": true
+          },
+          "nextPage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "readOnly": true
+          },
+          "previousPage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "readOnly": true
+          },
+          "settings": {
+            "$ref": "#/components/schemas/DocumentSetting"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DownloadZipFileResponse": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/FileTypeEnum"
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileCategory": {
+        "enum": [
+          "NotSet",
+          "Drawing",
+          "Document"
+        ],
+        "type": "string"
+      },
+      "FileCollection": {
+        "type": "object",
+        "properties": {
+          "raw": {
+            "$ref": "#/components/schemas/File"
+          },
+          "pdf": {
+            "$ref": "#/components/schemas/File"
+          },
+          "thumbnail": {
+            "$ref": "#/components/schemas/File"
+          },
+          "preview": {
+            "$ref": "#/components/schemas/File"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileTypeEnum": {
+        "enum": [
+          "Raw",
+          "Pdf",
+          "Thumbnail",
+          "Preview",
+          "BimPreview",
+          "BimThumbnail"
+        ],
+        "type": "string"
+      },
+      "ListDocumentsRequestParams": {
+        "type": "object",
+        "properties": {
+          "binderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentWithVersionIds"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Mention": {
+        "type": "object",
+        "properties": {
+          "annotationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Metadata": {
+        "type": "object",
+        "properties": {
+          "valueType": {
+            "$ref": "#/components/schemas/ValueTypeEnum"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataDefinition": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataElementIdDefinition": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataRequiredForUploadDefinition": {
+        "type": "object",
+        "properties": {
+          "layoutRows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/MetadataElementIdDefinition"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataUsedForDisplayDefinition": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "renderSmallView": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoveFromTo": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CopyResourceModel"
+            },
+            "nullable": true
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderingSystem": {
+        "enum": [
+          "Byggnet",
+          "iBinder"
+        ],
+        "type": "string"
+      },
+      "PrintAddressItem": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintFile": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "category": {
+            "$ref": "#/components/schemas/FileCategory"
+          },
+          "pagesCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pageWidth": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "pageHeight": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "format": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintOrder": {
+        "type": "object",
+        "properties": {
+          "printProviderId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "deliveryMethod": {
+            "$ref": "#/components/schemas/DeliveryMethod"
+          },
+          "deliveryOption": {
+            "$ref": "#/components/schemas/DeliveryOption"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country"
+          },
+          "distributionFile": {
+            "$ref": "#/components/schemas/PrintSimpleFile"
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrintRecipient"
+            },
+            "nullable": true
+          },
+          "orderer": {
+            "$ref": "#/components/schemas/PrintUser"
+          },
+          "payer": {
+            "$ref": "#/components/schemas/PrintPayer"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrintFile"
+            },
+            "nullable": true
+          },
+          "printOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "printOrderNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderingSystem": {
+            "$ref": "#/components/schemas/OrderingSystem"
+          },
+          "project": {
+            "type": "string",
+            "nullable": true
+          },
+          "printProviderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "userFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "printOrderDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintOrderParameters": {
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentData"
+            },
+            "nullable": true
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "payer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "binderId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintPayer": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/PrintAddressItem"
+          },
+          "printReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "orgId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintRecipient": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/PrintAddressItem"
+          },
+          "documentSettings": {
+            "$ref": "#/components/schemas/RecipientDocumentPrintSettings"
+          },
+          "drawingSettings": {
+            "$ref": "#/components/schemas/RecipientDrawingPrintSettings"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintSimpleFile": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrintUser": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/PrintAddressItem"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "RecipientDocumentPrintSettings": {
+        "type": "object",
+        "properties": {
+          "printOption": {
+            "type": "string",
+            "nullable": true
+          },
+          "postProcessingOption": {
+            "type": "string",
+            "nullable": true
+          },
+          "copiesPerDocument": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecipientDrawingPrintSettings": {
+        "type": "object",
+        "properties": {
+          "printOption": {
+            "type": "string",
+            "nullable": true
+          },
+          "postProcessingOption": {
+            "type": "string",
+            "nullable": true
+          },
+          "formatGroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "copiesPerDrawing": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchParameters": {
+        "type": "object",
+        "properties": {
+          "metadataFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataDefinition"
+            },
+            "nullable": true
+          },
+          "sortBy": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortClause"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityContext": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityContextRequiredRole"
+            },
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityContextPermission"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityContextPermission": {
+        "type": "object",
+        "properties": {
+          "permissionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredRoleTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "requiredRoleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "requiredUserIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityContextRequiredRole": {
+        "type": "object",
+        "properties": {
+          "permissionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredRoleTypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredRoleId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SimpleMetadataDefinition": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SortClause": {
+        "type": "object",
+        "properties": {
+          "metadataElementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "direction": {
+            "$ref": "#/components/schemas/SortOrder"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SortOrder": {
+        "enum": [
+          "Asc",
+          "Desc"
+        ],
+        "type": "string"
+      },
+      "Upload": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlValidUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "metadataFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metadata"
+            },
+            "nullable": true
+          },
+          "uploadArea": {
+            "$ref": "#/components/schemas/UploadAreaEnum"
+          },
+          "committed": {
+            "type": "boolean"
+          },
+          "uploadFinished": {
+            "type": "boolean"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "documentVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "discriminatingMetadata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleMetadataDefinition"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadAreaEnum": {
+        "enum": [
+          "Default",
+          "Personal"
+        ],
+        "type": "string"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "initials": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "profilePicture": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "company": {
+            "$ref": "#/components/schemas/Company"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValueTypeEnum": {
+        "enum": [
+          "String",
+          "Integer",
+          "Number",
+          "Boolean",
+          "Guid",
+          "Date"
+        ],
+        "type": "string"
+      },
+      "VersionTypes": {
+        "enum": [
+          "Version",
+          "Revision"
+        ],
+        "type": "string"
+      },
+      "ZipInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "documentIdPairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentIdPair"
+            },
+            "nullable": true
+          },
+          "orderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipType": {
+            "$ref": "#/components/schemas/ZipTypeEnum"
+          },
+          "binderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tabId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isFinished": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ZipTypeEnum": {
+        "enum": [
+          "SelectedDocumentsZip",
+          "TabZip",
+          "BinderZip"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://test-signin.ibinder.com/connect/authorize",
+            "tokenUrl": "https://test-signin.ibinder.com/connect/token",
+            "scopes": {
+              "ibinder_public": "access for documents"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": [ ]
+    }
+  ]
+}
