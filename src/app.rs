@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::api::ApiDocs;
+
 #[derive(Debug)]
 pub enum CurrentScreen {
     Main,
@@ -7,6 +9,12 @@ pub enum CurrentScreen {
     Exiting,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum CurrentPane {
+    ApiPaths,
+    Collections,
+    HttpCalls,
+}
 #[derive(Debug)]
 pub enum CurrentlyEditing {
     Key,
@@ -19,17 +27,21 @@ pub struct App {
     pub value_input: String,
     pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
+    pub current_pane: CurrentPane,
     pub currently_editing: Option<CurrentlyEditing>,
+    pub api_docs: ApiDocs,
 }
 
 impl App {
-    pub fn new() -> App {
+    pub fn new(docs: ApiDocs) -> App {
         App {
             key_input: String::new(),
             value_input: String::new(),
             pairs: HashMap::new(),
             current_screen: CurrentScreen::Main,
             currently_editing: None,
+            current_pane: CurrentPane::ApiPaths,
+            api_docs: docs,
         }
     }
     pub fn save_key_value(&mut self) {

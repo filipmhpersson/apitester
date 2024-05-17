@@ -1,8 +1,11 @@
-use crossterm::event::DisableMouseCapture;
-use crossterm::event::EnableMouseCapture;
+use app::App;
+use app::CurrentPane;
+use crossterm::event;
+use crossterm::event::*;
 use crossterm::execute;
 use crossterm::terminal::{disable_raw_mode, LeaveAlternateScreen};
 use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};
+use ratatui::backend::Backend;
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
 use std::error::Error;
@@ -23,9 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
-    let app = app::App::new();
-    let res = run_app(&mut terminal, &mut app);
-    dbg!("{}", app);
+    let res = App::new(json).run(&mut terminal);
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -34,12 +35,30 @@ fn main() -> Result<(), Box<dyn Error>> {
     )?;
     terminal.show_cursor()?;
 
-    if let Ok(do_print) = res {
-        if do_print {
-            app.print_json()?;
-        }
-    } else if let Err(err) = res {
-        println!("{err:?}")
-    }
     Ok(())
+}
+
+impl App {
+    pub fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<bool> {
+        loop {
+            terminal.draw(|f| ui::draw(f, self))?;
+            if let Event::Key(key) = event::read()? {
+                if key.kind == event::KeyEventKind::Release {
+                    continue;
+                }
+
+                match self.current_screen {
+                    app::CurrentScreen::Main => match key.code {
+                        KeyCode::Char('q') => break,
+                        KeyCode::Char('k') => self.current_pane = CurrentPane::Collections,
+                        KeyCode::Char('j') => self.current_pane = CurrentPane::ApiPaths,
+                        _ => {}
+                    },
+                    _ => {}
+                }
+            }
+        }
+        self.print_json()?;
+        Ok(true)
+    }
 }
