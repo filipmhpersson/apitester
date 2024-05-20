@@ -1,4 +1,7 @@
-use crate::app::{App, CurrentPane};
+use crate::{
+    api::Action,
+    app::{App, AppApiPaths, CurrentPane},
+};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Margin},
     prelude::*,
@@ -9,32 +12,16 @@ use ratatui::{
 };
 
 pub fn draw(f: &mut Frame, app: &mut App) {
+    if let Some(_) = &app.currently_editing {
+        let popup_block = Block::default()
+            .title("Enter a new key-value pair")
+            .borders(Borders::NONE)
+            .style(Style::default().bg(Color::DarkGray));
+
+        let area = centered_rect(60, 25, f.size());
+        f.render_widget(popup_block, area);
+    }
     ui(f, app);
-    //    let chunks = Layout::horizontal([
-    //        Constraint::Length(40),
-    //        Constraint::Length(1),
-    //        Constraint::Length(3),
-    //    ])
-    //    .split(f.size());
-    //
-    //    let title_block = Block::default()
-    //        .borders(Borders::ALL)
-    //        .title("Paths")
-    //        .style(Style::default());
-    //
-    //    let path_block = Block::default()
-    //        .borders(Borders::ALL)
-    //        .title("Paths")
-    //        .style(Style::new());
-    //
-    //    let left_chunks =
-    //        Layout::vertical([Constraint::Length(50), Constraint::Length(50)]).split(f.size());
-    //
-    //    let title =
-    //        Paragraph::new(Text::styled("Create new Json", Style::default())).block(title_block);
-    //
-    //    f.render_widget(path_block, left_chunks[0]);
-    //    f.render_widget(title, chunks[0]);
 }
 
 // ANCHOR: ui
@@ -50,108 +37,205 @@ fn ui(frame: &mut Frame, app: &mut App) {
         // where the borders are collapsed.
         .constraints([Constraint::Percentage(26), Constraint::Percentage(74)])
         .split(frame.size());
+
     let sub_layout = Layout::default()
         .direction(Direction::Vertical)
         // use a 49/51 split to ensure that any extra space is on the bottom
-        .constraints([Constraint::Percentage(49), Constraint::Percentage(51)])
+        .constraints([Constraint::Percentage(75), Constraint::Percentage(25)])
         .split(layout[0]);
-    // ANCHOR_END: layout
-    // ANCHOR: left_block
+
+    let paths = app.filter();
+    match paths.get(app.cursor_path) {
+        Some(selected) => match app.environments.get(app.selected_environment) {
+            Some(environment) => {
+                let sub_layout = Layout::default()
+                    .direction(Direction::Vertical)
+                    // use a 49/51 split to ensure that any extra space is on the bottom
+                    .constraints([Constraint::Length(3), Constraint::Fill(2)])
+                    .split(layout[1]);
+                let text = vec![Line::from(vec![Span::styled(
+                    format!("{}{}", environment.url, selected.path.clone()),
+                    Style::new().green().italic(),
+                )])];
+                let url = Paragraph::new(text)
+                    .block(
+                        Block::new()
+                            .title(format!("{}{}", environment.url, selected.path.clone()))
+                            .borders(Borders::ALL),
+                    )
+                    .style(Style::new().white())
+                    .alignment(Alignment::Center)
+                    .wrap(Wrap { trim: true });
+                frame.render_widget(url, sub_layout[0]);
+
+                let selected_tab_index = app.selected_method;
+                let tabs = selected
+                    .methods
+                    .iter()
+                    .map(|m| m.0.clone())
+                    .collect::<Tabs>()
+                    .select(selected_tab_index)
+                    .highlight_style(Style::default().yellow())
+                    .padding(" ", " ")
+                    .divider(symbols::DOT);
+                frame.render_widget(tabs, sub_layout[1]);
+            }
+            None => {}
+        },
+        None => {}
+    };
+    let active_border_style = if app.current_pane == CurrentPane::HttpCalls {
+        Style::default().yellow()
+    } else {
+        Style::default().white()
+    };
     frame.render_widget(
         Block::new()
             // don't render the right border because it will be rendered by the right block
-            .border_set(symbols::border::ROUNDED)
-            .borders(Borders::TOP | Borders::RIGHT | Borders::BOTTOM)
+            .borders(Borders::ALL)
+            .border_style(active_border_style)
+            .style(Style::default())
             .title("Left Block"),
         layout[1],
     );
-    // ANCHOR_END: left_block
-
-    // ANCHOR: top_right_block
-    // top right block must render the top left border to join with the left block
-    let top_right_border_set = symbols::border::Set {
-        top_left: symbols::line::NORMAL.horizontal_down,
-        ..symbols::border::PLAIN
-    };
-
-    let vertical_scroll = 0; // from app state
-
-    let items: Vec<Line> = app
-        .api_docs
-        .paths
-        .iter()
-        .map(|p| Line::from(String::from(p.0)))
-        .collect();
-    let paragraph = Paragraph::new(items.clone())
-        .scroll((vertical_scroll as u16, 0))
-        .block(Block::new().borders(Borders::RIGHT)); // to show a background for the scrollbar
-
-    let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
-        .begin_symbol(Some("↑"))
-        .end_symbol(Some("↓"));
-
-    let mut scrollbar_state = ScrollbarState::new(items.len()).position(vertical_scroll);
-
     // Note we render the paragraph
-    frame.render_widget(paragraph, sub_layout[0]);
     // and the scrollbar, those are separate widgets
-    frame.render_stateful_widget(
-        scrollbar,
-        sub_layout[0].inner(&Margin {
-            // using an inner vertical margin of 1 unit makes the scrollbar inside the block
-            vertical: 1,
-            horizontal: 1,
-        }),
-        &mut scrollbar_state,
-    );
     let border_style = if app.current_pane == CurrentPane::ApiPaths {
         Style::default().yellow()
     } else {
         Style::default().white()
     };
+    render_paths(frame, &app.cursor_path, &paths, app, sub_layout[0]);
     frame.render_widget(
         Block::new()
-            .border_set(top_right_border_set)
             // don't render the bottom border because it will be rendered by the bottom block
-            .borders(Borders::TOP | Borders::LEFT | Borders::RIGHT)
+            .borders(Borders::ALL)
             .border_style(border_style)
-            .title("Top Right Block"),
+            .title("API Paths"),
         sub_layout[0],
     );
-    //   app.api_docs.paths.iter().for_each(|path| {
-    //       let title_block = Block::default()
-    //           .borders(Borders::ALL)
-    //           .title("Paths")
-    //           .style(Style::default());
-
-    //       let title = Paragraph::new(Text::styled(path.0, Style::default())).block(title_block);
-    //       frame.render_widget(title, sub_layout[0])
-    //   });
-    // ANCHOR_END: top_right_block
-
-    // ANCHOR: bottom_right_block
-    // bottom right block must render:
-    // - top left border to join with the left block and top right block
-    // - top right border to join with the top right block
-    // - bottom left border to join with the left block
-    let collapsed_top_and_left_border_set = symbols::border::Set {
-        top_left: symbols::line::NORMAL.vertical_right,
-        top_right: symbols::line::NORMAL.vertical_left,
-        bottom_left: symbols::line::NORMAL.horizontal_up,
-        ..symbols::border::PLAIN
-    };
     let iborder_style = if app.current_pane == CurrentPane::Collections {
         Style::default().yellow()
     } else {
         Style::default().white()
     };
+    render_environments(frame, app, sub_layout[1]);
     frame.render_widget(
         Block::new()
-            .border_set(collapsed_top_and_left_border_set)
             .borders(Borders::ALL)
             .border_style(iborder_style)
-            .title("Bottom Right Block"),
+            .title("Environments"),
         sub_layout[1],
     );
+}
+
+fn addmethod<'a>(method: &Option<Action>, tabs: &'a mut Vec<&'a str>, tabname: &'a str) {
+    match method {
+        Some(_) => tabs.push(tabname),
+        _ => (),
+    };
+}
+
+fn render_environments(f: &mut Frame, app: &App, render_area: Rect) {
+    let sub_layout = Layout::default()
+        .direction(Direction::Vertical)
+        // use a 49/51 split to ensure that any extra space is on the bottom
+        .constraints([Constraint::Percentage(100)])
+        .vertical_margin(1)
+        .split(render_area);
+
+    let active_border_style = if app.current_pane == CurrentPane::FilterApi {
+        Style::default().yellow()
+    } else {
+        Style::default().white()
+    };
+    let paths_in_ui = app
+        .environments
+        .iter()
+        .map(|p| format!("{}", p.name))
+        .collect::<List>();
+
+    let list = paths_in_ui
+        .style(Style::default().fg(Color::White))
+        .highlight_style(Style::default().cyan().add_modifier(Modifier::BOLD))
+        .highlight_symbol(">>")
+        .scroll_padding(1)
+        .repeat_highlight_symbol(true)
+        .direction(ListDirection::TopToBottom);
+
+    let mut state = ListState::default().with_selected(Some(app.selected_environment.clone()));
+    f.render_stateful_widget(list, sub_layout[0], &mut state);
     // ANCHOR_END: bottom_right_block
+}
+fn render_paths(
+    f: &mut Frame,
+    selected_path: &usize,
+    paths: &Vec<&AppApiPaths>,
+    app: &App,
+    render_area: Rect,
+) {
+    let sub_layout = Layout::default()
+        .direction(Direction::Vertical)
+        // use a 49/51 split to ensure that any extra space is on the bottom
+        .constraints([Constraint::Length(3), Constraint::Fill(2)])
+        .split(render_area);
+
+    let active_border_style = if app.current_pane == CurrentPane::FilterApi {
+        Style::default().yellow()
+    } else {
+        Style::default().white()
+    };
+    let text = vec![Line::from(vec![
+        Span::styled("Filter: ", Style::new().green().italic()),
+        app.filter.clone().into(),
+    ])];
+
+    let url = Paragraph::new(text)
+        .block(
+            Block::new()
+                .borders(Borders::ALL)
+                .border_style(active_border_style),
+        )
+        .style(Style::default().fg(Color::White))
+        .alignment(Alignment::Left)
+        .wrap(Wrap { trim: true });
+    f.render_widget(url, sub_layout[0]);
+    let paths_in_ui = paths
+        .iter()
+        .map(|p| format!("{}", p.path))
+        .collect::<List>();
+
+    let list = paths_in_ui
+        .style(Style::default().fg(Color::White))
+        .highlight_style(Style::default().cyan().add_modifier(Modifier::BOLD))
+        .highlight_symbol(">>")
+        .scroll_padding(1)
+        .repeat_highlight_symbol(true)
+        .direction(ListDirection::TopToBottom);
+
+    let mut state = ListState::default().with_selected(Some(selected_path.clone()));
+    f.render_stateful_widget(list, sub_layout[1], &mut state);
+    // ANCHOR_END: bottom_right_block
+}
+/// helper function to create a centered rect using up certain percentage of the available rect `r`
+fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+    // Cut the given rectangle into three vertical pieces
+    let popup_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Percentage((100 - percent_y) / 2),
+            Constraint::Percentage(percent_y),
+            Constraint::Percentage((100 - percent_y) / 2),
+        ])
+        .split(r);
+
+    // Then cut the middle vertical piece into three width-wise pieces
+    Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage((100 - percent_x) / 2),
+            Constraint::Percentage(percent_x),
+            Constraint::Percentage((100 - percent_x) / 2),
+        ])
+        .split(popup_layout[1])[1] // Return the middle chunk
 }

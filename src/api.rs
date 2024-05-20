@@ -1,17 +1,10 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ApiDocs {
-    pub paths: BTreeMap<String, Path>,
-}
-#[derive(Deserialize, Debug, Clone)]
-pub struct Path {
-    pub set: Option<Action>,
-    pub post: Option<Action>,
-    pub put: Option<Action>,
-    pub delete: Option<Action>,
+    pub paths: BTreeMap<String, HashMap<String, Action>>,
 }
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]

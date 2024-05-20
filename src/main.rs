@@ -1,5 +1,8 @@
+use api::ApiDocs;
 use app::App;
 use app::CurrentPane;
+use app::CurrentScreen;
+use app::CurrentlyEditing;
 use crossterm::event;
 use crossterm::event::*;
 use crossterm::execute;
@@ -13,6 +16,7 @@ use std::fs;
 use std::io;
 mod api;
 mod app;
+mod newapp;
 mod ui;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -43,15 +47,59 @@ impl App {
         loop {
             terminal.draw(|f| ui::draw(f, self))?;
             if let Event::Key(key) = event::read()? {
-                if key.kind == event::KeyEventKind::Release {
-                    continue;
-                }
+                match self.current_pane {
+                    CurrentPane::FilterApi => match key.code {
+                        KeyCode::Char(value) if key.modifiers.is_empty() => self.filter.push(value),
+                        KeyCode::Enter => self.current_pane = CurrentPane::ApiPaths,
+                        KeyCode::Esc => {
+                            self.filter = "".to_string();
+                            self.current_pane = CurrentPane::ApiPaths;
+                        }
+                        KeyCode::Backspace => {
+                            self.filter.pop();
+                        }
+                        _ => (),
+                    },
+                    CurrentPane::Collections => match key.code {
+                        KeyCode::Char('j') if key.modifiers.is_empty() => {
+                            self.scroll_down_selected_env(1)
+                        }
+                        KeyCode::Char('k') if key.modifiers.is_empty() => {
+                            self.scroll_up_selected_env(1)
+                        }
+                        _ => {}
+                    },
+                    CurrentPane::ApiPaths => match key.code {
+                        KeyCode::Char('j') if key.modifiers.is_empty() => {
+                            self.scroll_down_cursor_path(1)
+                        }
+                        KeyCode::Char('k') if key.modifiers.is_empty() => {
+                            self.scroll_up_cursor_path(1)
+                        }
 
+                        KeyCode::Char('f') if key.modifiers.is_empty() => {
+                            self.current_pane = CurrentPane::FilterApi;
+                        }
+                        KeyCode::Char('d') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                            self.scroll_down_cursor_path(15);
+                        }
+                        KeyCode::Char('u') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                            self.scroll_up_cursor_path(15);
+                        }
+                        _ => {}
+                    },
+                    _ => {}
+                }
                 match self.current_screen {
                     app::CurrentScreen::Main => match key.code {
                         KeyCode::Char('q') => break,
-                        KeyCode::Char('k') => self.current_pane = CurrentPane::Collections,
-                        KeyCode::Char('j') => self.current_pane = CurrentPane::ApiPaths,
+                        KeyCode::Char('k') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                            self.current_pane = CurrentPane::Collections
+                        }
+                        KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                            self.current_pane = CurrentPane::ApiPaths
+                        }
+                        KeyCode::Tab => {}
                         _ => {}
                     },
                     _ => {}
