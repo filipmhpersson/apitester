@@ -12,15 +12,6 @@ use ratatui::{
 };
 
 pub fn draw(f: &mut Frame, app: &mut App) {
-    if let Some(_) = &app.currently_editing {
-        let popup_block = Block::default()
-            .title("Enter a new key-value pair")
-            .borders(Borders::NONE)
-            .style(Style::default().bg(Color::DarkGray));
-
-        let area = centered_rect(60, 25, f.size());
-        f.render_widget(popup_block, area);
-    }
     ui(f, app);
 }
 
@@ -44,9 +35,8 @@ fn ui(frame: &mut Frame, app: &mut App) {
         .constraints([Constraint::Percentage(75), Constraint::Percentage(25)])
         .split(layout[0]);
 
-    let paths = app.filter();
-    match paths.get(app.cursor_path) {
-        Some(selected) => match app.environments.get(app.selected_environment) {
+    match &app.current_path {
+        Some(selected) => match app.environments.get(app.index_environment) {
             Some(environment) => {
                 let sub_layout = Layout::default()
                     .direction(Direction::Vertical)
@@ -68,7 +58,7 @@ fn ui(frame: &mut Frame, app: &mut App) {
                     .wrap(Wrap { trim: true });
                 frame.render_widget(url, sub_layout[0]);
 
-                let selected_tab_index = app.selected_method;
+                let selected_tab_index = app.index_method;
                 let tabs = selected
                     .methods
                     .iter()
@@ -105,7 +95,7 @@ fn ui(frame: &mut Frame, app: &mut App) {
     } else {
         Style::default().white()
     };
-    render_paths(frame, &app.cursor_path, &paths, app, sub_layout[0]);
+    render_paths(frame, &app.index_path, app, sub_layout[0]);
     frame.render_widget(
         Block::new()
             // don't render the bottom border because it will be rendered by the bottom block
@@ -127,13 +117,6 @@ fn ui(frame: &mut Frame, app: &mut App) {
             .title("Environments"),
         sub_layout[1],
     );
-}
-
-fn addmethod<'a>(method: &Option<Action>, tabs: &'a mut Vec<&'a str>, tabname: &'a str) {
-    match method {
-        Some(_) => tabs.push(tabname),
-        _ => (),
-    };
 }
 
 fn render_environments(f: &mut Frame, app: &App, render_area: Rect) {
@@ -163,17 +146,11 @@ fn render_environments(f: &mut Frame, app: &App, render_area: Rect) {
         .repeat_highlight_symbol(true)
         .direction(ListDirection::TopToBottom);
 
-    let mut state = ListState::default().with_selected(Some(app.selected_environment.clone()));
+    let mut state = ListState::default().with_selected(Some(app.index_environment.clone()));
     f.render_stateful_widget(list, sub_layout[0], &mut state);
     // ANCHOR_END: bottom_right_block
 }
-fn render_paths(
-    f: &mut Frame,
-    selected_path: &usize,
-    paths: &Vec<&AppApiPaths>,
-    app: &App,
-    render_area: Rect,
-) {
+fn render_paths(f: &mut Frame, selected_path: &usize, app: &App, render_area: Rect) {
     let sub_layout = Layout::default()
         .direction(Direction::Vertical)
         // use a 49/51 split to ensure that any extra space is on the bottom
@@ -200,7 +177,8 @@ fn render_paths(
         .alignment(Alignment::Left)
         .wrap(Wrap { trim: true });
     f.render_widget(url, sub_layout[0]);
-    let paths_in_ui = paths
+    let paths_in_ui = app
+        .filtered_paths
         .iter()
         .map(|p| format!("{}", p.path))
         .collect::<List>();

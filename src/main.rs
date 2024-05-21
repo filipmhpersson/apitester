@@ -1,8 +1,6 @@
-use api::ApiDocs;
 use app::App;
 use app::CurrentPane;
-use app::CurrentScreen;
-use app::CurrentlyEditing;
+
 use crossterm::event;
 use crossterm::event::*;
 use crossterm::execute;
@@ -15,8 +13,8 @@ use std::error::Error;
 use std::fs;
 use std::io;
 mod api;
+mod apirunner;
 mod app;
-mod newapp;
 mod ui;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -49,14 +47,16 @@ impl App {
             if let Event::Key(key) = event::read()? {
                 match self.current_pane {
                     CurrentPane::FilterApi => match key.code {
-                        KeyCode::Char(value) if key.modifiers.is_empty() => self.filter.push(value),
+                        KeyCode::Char(value) if key.modifiers.is_empty() => {
+                            self.push_filter(value);
+                        }
                         KeyCode::Enter => self.current_pane = CurrentPane::ApiPaths,
                         KeyCode::Esc => {
-                            self.filter = "".to_string();
+                            self.clear_filter();
                             self.current_pane = CurrentPane::ApiPaths;
                         }
                         KeyCode::Backspace => {
-                            self.filter.pop();
+                            self.pop_filter();
                         }
                         _ => (),
                     },
@@ -99,7 +99,13 @@ impl App {
                         KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                             self.current_pane = CurrentPane::ApiPaths
                         }
-                        KeyCode::Tab => {}
+                        KeyCode::Tab if key.modifiers.is_empty() => {
+                            self.next_action();
+                        }
+
+                        KeyCode::Tab if key.modifiers.contains(KeyModifiers::SHIFT) => {
+                            self.prev_action();
+                        }
                         _ => {}
                     },
                     _ => {}

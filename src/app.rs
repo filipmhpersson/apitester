@@ -5,8 +5,6 @@ use crate::api::{Action, ApiDocs};
 #[derive(Debug)]
 pub enum CurrentScreen {
     Main,
-    Editing,
-    Exiting,
 }
 
 #[derive(Debug, PartialEq)]
@@ -16,13 +14,8 @@ pub enum CurrentPane {
     Collections,
     HttpCalls,
 }
-#[derive(Debug)]
-pub enum CurrentlyEditing {
-    Key,
-    Value,
-}
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AppApiPaths {
     pub path: String,
     pub methods: HashMap<String, Action>,
@@ -39,28 +32,52 @@ pub struct App {
     pub pairs: HashMap<String, String>,
     pub current_screen: CurrentScreen,
     pub current_pane: CurrentPane,
-    pub currently_editing: Option<CurrentlyEditing>,
     paths: Vec<AppApiPaths>,
+    pub filtered_paths: Vec<AppApiPaths>,
+    pub current_path: Option<AppApiPaths>,
+    pub current_method: Option<(String, Action)>,
+    pub current_methods: Option<Vec<(String, Action)>>,
     pub environments: Vec<ApiEnvironment>,
     pub filter: String,
-    pub cursor_path: usize,
-    pub selected_environment: usize,
-    pub selected_method: usize,
+    pub index_path: usize,
+    pub index_environment: usize,
+    pub index_method: usize,
 }
 
 impl App {
     pub fn new(docs: ApiDocs) -> App {
+        let paths: Vec<AppApiPaths> = docs
+            .paths
+            .into_iter()
+            .map(|p| AppApiPaths {
+                path: p.0.to_string(),
+                methods: p.1.clone(),
+            })
+            .collect();
+        let filtered_paths = paths.clone();
+        let current_path = filtered_paths[0].clone();
+        let current_methods: Vec<(String, Action)> = current_path
+            .methods
+            .clone()
+            .into_iter()
+            .map(|m| (m.0.to_string(), m.1.clone()))
+            .collect();
+        let current_method = current_methods[0].clone();
+
         App {
             key_input: String::new(),
             value_input: String::new(),
             pairs: HashMap::new(),
             current_screen: CurrentScreen::Main,
-            currently_editing: None,
             current_pane: CurrentPane::ApiPaths,
-            cursor_path: 0,
-            selected_environment: 0,
-            selected_method: 0,
+            index_path: 0,
+            index_environment: 0,
+            index_method: 0,
+            current_path: Some(filtered_paths[0].clone()),
             filter: "document".to_string(),
+            filtered_paths,
+            current_method: Some(current_method),
+            current_methods: Some(current_methods),
             environments: vec![
                 ApiEnvironment {
                     name: "localhost".to_string(),
@@ -75,81 +92,120 @@ impl App {
                     url: "my.ibinder.com/api/documents".to_string(),
                 },
             ],
-            paths: docs
-                .paths
-                .into_iter()
-                .map(|p| AppApiPaths {
-                    path: p.0.to_string(),
-                    methods: p.1.clone(),
-                })
-                .collect(),
+            paths,
         }
     }
-    pub fn save_key_value(&mut self) {
-        self.pairs
-            .insert(self.key_input.clone(), self.value_input.clone());
-        self.key_input = String::new();
-        self.value_input = String::new();
-        self.currently_editing = None;
+    fn set_current(&mut self) {
+        let current_path = self.filtered_paths[self.index_path].clone();
+        let current_methods: Vec<(String, Action)> = current_path
+            .methods
+            .clone()
+            .into_iter()
+            .map(|m| (m.0.to_string(), m.1.clone()))
+            .collect();
+        let current_method = current_methods[self.index_method].clone();
+
+        self.current_path = Some(current_path);
+        self.current_methods = Some(current_methods);
+        self.current_method = Some(current_method);
+    }
+    pub fn push_filter(&mut self, char: char) {
+        self.filter.push(char);
+        let paths: Vec<AppApiPaths> = self
+            .filtered_paths
+            .drain(..)
+            .into_iter()
+            .filter(|p| p.path.contains(&self.filter))
+            .collect();
+        self.filtered_paths = paths;
+    }
+    pub fn pop_filter(&mut self) {
+        if self.filter.len() == 0 {
+            return;
+        }
+        self.index_path = 0;
+        self.filter.pop();
+        self.filtered_paths = self
+            .paths
+            .clone()
+            .into_iter()
+            .filter(|p| p.path.contains(&self.filter))
+            .collect();
+    }
+    pub fn clear_filter(&mut self) {
+        self.filtered_paths = self.paths.clone();
+        self.filter = "".to_string();
     }
 
-    pub fn filter(&self) -> Vec<&AppApiPaths> {
-        match &self.filter.len() {
-            0 => self.paths.iter().collect(),
-            _ => self
-                .paths
-                .iter()
-                .filter(|p| p.path.contains(&self.filter))
-                .collect(),
+    pub fn next_action(&mut self) {
+        match &self.current_methods {
+            Some(current_methods) => {
+                if self.index_method >= current_methods.len() - 1 {
+                    self.index_method = 0;
+                } else {
+                    self.index_method += 1;
+                }
+                match &self.current_methods {
+                    Some(current_methods) => {
+                        self.current_method = Some(current_methods[self.index_method].clone());
+                    }
+                    None => (),
+                }
+            }
+            None => (),
+        }
+    }
+
+    pub fn prev_action(&mut self) {
+        match &self.current_methods {
+            Some(current_methods) => {
+                if self.index_method == 0 {
+                    self.index_method = current_methods.len() - 1;
+                } else {
+                    self.index_method -= 1;
+                }
+                match &self.current_methods {
+                    Some(current_methods) => {
+                        self.current_method = Some(current_methods[self.index_method].clone());
+                    }
+                    None => (),
+                }
+            }
+            None => (),
         }
     }
 
     pub fn scroll_down_selected_env(&mut self, items: usize) {
-        if self.selected_environment + items >= self.paths.len() {
-            self.selected_environment = self.paths.len() - 1;
+        if self.index_environment + items >= self.paths.len() {
+            self.index_environment = self.paths.len() - 1;
         } else {
-            self.selected_environment += items;
+            self.index_environment += items;
         }
     }
 
     pub fn scroll_up_selected_env(&mut self, items: usize) {
-        if items > self.selected_environment {
-            self.selected_environment = 0;
+        if items > self.index_environment {
+            self.index_environment = 0;
         } else {
-            self.selected_environment -= items;
+            self.index_environment -= items;
         }
     }
     pub fn scroll_down_cursor_path(&mut self, items: usize) {
-        if self.cursor_path + items >= self.paths.len() {
-            self.cursor_path = self.paths.len() - 1;
+        if self.index_path + items >= self.paths.len() {
+            self.index_path = self.paths.len() - 1;
         } else {
-            self.cursor_path += items;
+            self.index_path += items;
         }
+        self.set_current();
     }
 
     pub fn scroll_up_cursor_path(&mut self, items: usize) {
-        if items > self.cursor_path {
-            self.cursor_path = 0;
+        if items > self.index_path {
+            self.index_path = 0;
         } else {
-            self.cursor_path -= items;
+            self.index_path -= items;
         }
-    }
-    pub fn next_tab(&mut self, items: usize) {
-        if items > self.cursor_path {
-            self.cursor_path = 0;
-        } else {
-            self.cursor_path -= items;
-        }
-    }
-    pub fn toggle_editing(&mut self) {
-        if let Some(edit_mode) = &self.currently_editing {
-            match edit_mode {
-                CurrentlyEditing::Key => self.currently_editing = Some(CurrentlyEditing::Value),
-                CurrentlyEditing::Value => self.currently_editing = Some(CurrentlyEditing::Key),
-            }
-        } else {
-            self.currently_editing = Some(CurrentlyEditing::Key);
-        }
+        self.set_current();
     }
 
     pub fn print_json(&self) -> serde_json::Result<()> {
