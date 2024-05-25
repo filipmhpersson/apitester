@@ -20,13 +20,6 @@ mod ui;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     println!("Hello, world!");
-    enable_raw_mode()?;
-    let mut stderr = io::stderr();
-    execute!(stderr, EnterAlternateScreen, EnableMouseCapture)?;
-    let file = fs::read_to_string("sample.json")?;
-    let json: api::ApiDocs = serde_json::from_str(&file).unwrap();
-    //dbg!("{}", json);
-
     let client =
         apirunner::fetch_url(hyper::Uri::from_str("https://google.com").expect("Valid URL"))
             .await?;
@@ -34,6 +27,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         "Received API response with body {} and statuscode {}",
         client.body, client.status_code
     );
+    enable_raw_mode()?;
+    let mut stderr = io::stderr();
+    execute!(stderr, EnterAlternateScreen, EnableMouseCapture)?;
+    let file = fs::read_to_string("sample.json")?;
+    let json: api::ApiDocs = serde_json::from_str(&file).unwrap();
+    //dbg!("{}", json);
+
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
     let _res = App::new(json).run(&mut terminal);

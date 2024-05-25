@@ -23,6 +23,7 @@ pub async fn fetch_url(url: hyper::Uri) -> Result<ApiResponse> {
 
     let path = url.path();
     let req = Request::builder()
+        .method("GET")
         .uri(path)
         .header(hyper::header::HOST, authority.as_str())
         .body(Empty::<Bytes>::new())?;
