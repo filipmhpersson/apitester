@@ -1,6 +1,5 @@
 use app::App;
 use app::CurrentPane;
-
 use crossterm::event;
 use crossterm::event::*;
 use crossterm::execute;
@@ -12,12 +11,14 @@ use ratatui::Terminal;
 use std::error::Error;
 use std::fs;
 use std::io;
+use std::str::FromStr;
 mod api;
 mod apirunner;
 mod app;
 mod ui;
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     println!("Hello, world!");
     enable_raw_mode()?;
     let mut stderr = io::stderr();
@@ -26,6 +27,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let json: api::ApiDocs = serde_json::from_str(&file).unwrap();
     //dbg!("{}", json);
 
+    let client =
+        apirunner::fetch_url(hyper::Uri::from_str("https://google.com").expect("Valid URL"))
+            .await?;
+    println!(
+        "Received API response with body {} and statuscode {}",
+        client.body, client.status_code
+    );
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
     let res = App::new(json).run(&mut terminal);
@@ -36,8 +44,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         DisableMouseCapture
     )?;
     terminal.show_cursor()?;
-
-    Ok(())
+    std::process::exit(0)
 }
 
 impl App {
