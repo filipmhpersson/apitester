@@ -8,7 +8,7 @@ use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};
 use ratatui::backend::Backend;
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
-use std::error::Error;
+
 use std::fs;
 use std::io;
 use std::str::FromStr;
@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     );
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
-    let res = App::new(json).run(&mut terminal);
+    let _res = App::new(json).run(&mut terminal);
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),

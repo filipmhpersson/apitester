@@ -1,9 +1,8 @@
 use crate::{
-    api::Action,
-    app::{App, AppApiPaths, CurrentPane},
+    app::{App, CurrentPane},
 };
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Margin},
+    layout::{Constraint, Direction, Layout},
     prelude::*,
     style::Style,
     symbols,
@@ -127,7 +126,7 @@ fn render_environments(f: &mut Frame, app: &App, render_area: Rect) {
         .vertical_margin(1)
         .split(render_area);
 
-    let active_border_style = if app.current_pane == CurrentPane::FilterApi {
+    let _active_border_style = if app.current_pane == CurrentPane::FilterApi {
         Style::default().yellow()
     } else {
         Style::default().white()
