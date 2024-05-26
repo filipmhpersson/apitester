@@ -1,8 +1,12 @@
+use std::str::FromStr;
+
+use crate::App;
 use http_body_util::{BodyExt, Empty};
 use hyper::body::Bytes;
 use hyper::Request;
 use hyper_util::rt::TokioIo;
 use tokio::net::TcpStream;
+
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
 pub async fn fetch_url(url: hyper::Uri) -> Result<ApiResponse> {
@@ -30,9 +34,6 @@ pub async fn fetch_url(url: hyper::Uri) -> Result<ApiResponse> {
 
     let mut res = sender.send_request(req).await?;
 
-    println!("Response: {}", res.status());
-    println!("Headers: {:#?}\n", res.headers());
-
     // Stream the body, writing each chunk to stdout as we get it
     // (instead of buffering and printing at the end).
     let mut response_body = String::new();
@@ -59,6 +60,7 @@ pub async fn fetch_url(url: hyper::Uri) -> Result<ApiResponse> {
     ))
 }
 
+#[derive(Debug)]
 pub struct ApiResponse {
     pub body: String,
     pub status_code: u16,

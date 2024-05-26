@@ -7,6 +7,7 @@ use crossterm::terminal::{disable_raw_mode, LeaveAlternateScreen};
 use crossterm::terminal::{enable_raw_mode, EnterAlternateScreen};
 use ratatui::backend::Backend;
 use ratatui::backend::CrosstermBackend;
+use ratatui::symbols::scrollbar;
 use ratatui::Terminal;
 
 use std::fs;
@@ -36,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
-    let _res = App::new(json).run(&mut terminal);
+    let _res = App::new(json).run(&mut terminal).await?;
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
@@ -48,7 +49,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 }
 
 impl App {
-    pub fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<bool> {
+    pub async fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<bool> {
         loop {
             terminal.draw(|f| ui::draw(f, self))?;
             if let Event::Key(key) = event::read()? {
@@ -78,7 +79,8 @@ impl App {
                     },
                     CurrentPane::ApiPaths => match key.code {
                         KeyCode::Char('j') if key.modifiers.is_empty() => {
-                            self.scroll_down_cursor_path(1)
+                            self.scroll_down_cursor_path(1);
+                            self.scroll_view_state.scroll_down();
                         }
                         KeyCode::Char('k') if key.modifiers.is_empty() => {
                             self.scroll_up_cursor_path(1)
@@ -100,11 +102,14 @@ impl App {
                 match self.current_screen {
                     app::CurrentScreen::Main => match key.code {
                         KeyCode::Char('q') => break,
-                        KeyCode::Char('k') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                        KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                             self.current_pane = CurrentPane::Collections
                         }
-                        KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                        KeyCode::Char('k') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                             self.current_pane = CurrentPane::ApiPaths
+                        }
+                        KeyCode::Char('r') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                            self.send_apirequest().await;
                         }
                         KeyCode::Tab if key.modifiers.is_empty() => {
                             self.next_action();

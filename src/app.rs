@@ -1,6 +1,11 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, str::FromStr};
 
-use crate::api::{Action, ApiDocs};
+use tui_scrollview::ScrollViewState;
+
+use crate::{
+    api::{Action, ApiDocs},
+    apirunner::{fetch_url, ApiResponse},
+};
 
 #[derive(Debug)]
 pub enum CurrentScreen {
@@ -13,6 +18,8 @@ pub enum CurrentPane {
     ApiPaths,
     Collections,
     HttpCalls,
+    HttpResponse,
+    HttpResult,
 }
 
 #[derive(Debug, Clone)]
@@ -41,9 +48,16 @@ pub struct App {
     pub filter: String,
     pub index_path: usize,
     pub index_environment: usize,
+    pub scroll_view_state: ScrollViewState,
     pub index_method: usize,
+    pub api_response: Option<ApiResponseResult>,
 }
 
+#[derive(Debug)]
+pub enum ApiResponseResult {
+    Success(ApiResponse),
+    Failure(String),
+}
 impl App {
     pub fn new(docs: ApiDocs) -> App {
         let paths: Vec<AppApiPaths> = docs
@@ -72,24 +86,26 @@ impl App {
             current_pane: CurrentPane::ApiPaths,
             index_path: 0,
             index_environment: 0,
+            scroll_view_state: ScrollViewState::new(),
             index_method: 0,
             current_path: Some(filtered_paths[0].clone()),
             filter: "document".to_string(),
             filtered_paths,
             current_method: Some(current_method),
             current_methods: Some(current_methods),
+            api_response: None,
             environments: vec![
                 ApiEnvironment {
                     name: "localhost".to_string(),
-                    url: "localhost:5035/api/documents".to_string(),
+                    url: "http://localhost:5035/api/documents".to_string(),
                 },
                 ApiEnvironment {
                     name: "Test".to_string(),
-                    url: "test-my.ibinder.com/api/documents".to_string(),
+                    url: "https://test-my.ibinder.com/api/documents".to_string(),
                 },
                 ApiEnvironment {
                     name: "Prod".to_string(),
-                    url: "my.ibinder.com/api/documents".to_string(),
+                    url: "https://my.ibinder.com/api/documents".to_string(),
                 },
             ],
             paths,
@@ -176,8 +192,7 @@ impl App {
     }
 
     pub fn scroll_down_selected_env(&mut self, items: usize) {
-        if self.index_environment + items >= self.paths.len() {
-            self.index_environment = self.paths.len() - 1;
+        if self.index_environment + items >= self.environments.len() {
         } else {
             self.index_environment += items;
         }
@@ -212,5 +227,22 @@ impl App {
         let output = serde_json::to_string(&self.pairs)?;
         println!("{}", output);
         Ok(())
+    }
+
+    pub async fn send_apirequest(&mut self) {
+        let environment = &self.environments[self.index_environment];
+        match &self.current_path {
+            Some(path) => {
+                let st = hyper::Uri::from_str(&format!("{}{}", environment.url, &path.path));
+                let result = fetch_url(st.expect("Valid URL")).await;
+                match result {
+                    Ok(result) => self.api_response = Some(ApiResponseResult::Success(result)),
+                    Err(err) => {
+                        self.api_response = Some(ApiResponseResult::Failure(err.to_string()))
+                    }
+                }
+            }
+            None => panic!("No selected path"),
+        }
     }
 }

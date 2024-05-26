@@ -1,25 +1,25 @@
-use crate::{
-    app::{App, CurrentPane},
-};
+use crate::app::{ApiResponseResult, App, CurrentPane};
 use ratatui::{
-    layout::{Constraint, Direction, Layout},
+    layout::{Constraint, Direction, Layout, Size},
     prelude::*,
-    style::Style,
+    style::{palette::tailwind, Style},
     symbols,
     widgets::*,
     Frame,
 };
+use tui_scrollview::ScrollView;
 
+mod resultview;
 pub fn draw(f: &mut Frame, app: &mut App) {
     ui(f, app);
 }
-
+const SCROLLVIEW_HEIGHT: u16 = 100;
 // ANCHOR: ui
 fn ui(frame: &mut Frame, app: &mut App) {
     // create a layout that splits the screen into 2 equal columns and the right column
     // into 2 equal rows
 
-    // ANCHOR: layout
+    // ANCHOR: layou
     let layout = Layout::default()
         .direction(Direction::Horizontal)
         // use a 49/51 split instead of 50/50 to ensure that any extra space is on the right
@@ -39,8 +39,11 @@ fn ui(frame: &mut Frame, app: &mut App) {
             Some(environment) => {
                 let sub_layout = Layout::default()
                     .direction(Direction::Vertical)
-                    // use a 49/51 split to ensure that any extra space is on the bottom
-                    .constraints([Constraint::Length(3), Constraint::Fill(2)])
+                    .constraints([
+                        Constraint::Length(3),
+                        Constraint::Length(3),
+                        Constraint::Fill(2),
+                    ])
                     .split(layout[1]);
                 let text = vec![Line::from(vec![Span::styled(
                     format!("{}{}", environment.url, selected.path.clone()),
@@ -68,6 +71,40 @@ fn ui(frame: &mut Frame, app: &mut App) {
                     .padding(" ", " ")
                     .divider(symbols::DOT);
                 frame.render_widget(tabs, sub_layout[1]);
+
+                if let Some(res) = &app.api_response {
+                    let mut scroll_view =
+                        ScrollView::new(Size::new(sub_layout[2].width, SCROLLVIEW_HEIGHT));
+
+                    let width = if sub_layout[2].height < SCROLLVIEW_HEIGHT {
+                        sub_layout[2].width - 10
+                    } else {
+                        sub_layout[2].width - 10
+                    };
+                    let txt = match res {
+                        ApiResponseResult::Failure(err) => &err,
+                        ApiResponseResult::Success(success) => &success.body,
+                    };
+
+                    let url1 = Paragraph::new(String::from(txt))
+                        .block(
+                            Block::new()
+                                .title(format!("{}{}", environment.url, selected.path.clone()))
+                                .borders(Borders::ALL),
+                        )
+                        .style(Style::new().white())
+                        .alignment(Alignment::Left)
+                        .wrap(Wrap { trim: false });
+                    scroll_view.render_widget(
+                        url1,
+                        Rect::new(0, 0, sub_layout[2].width, SCROLLVIEW_HEIGHT),
+                    );
+                    scroll_view.render(
+                        sub_layout[2],
+                        frame.buffer_mut(),
+                        &mut app.scroll_view_state,
+                    );
+                }
             }
             None => {}
         },
@@ -78,15 +115,6 @@ fn ui(frame: &mut Frame, app: &mut App) {
     } else {
         Style::default().white()
     };
-    frame.render_widget(
-        Block::new()
-            // don't render the right border because it will be rendered by the right block
-            .borders(Borders::ALL)
-            .border_style(active_border_style)
-            .style(Style::default())
-            .title("Left Block"),
-        layout[1],
-    );
     // Note we render the paragraph
     // and the scrollbar, those are separate widgets
     let border_style = if app.current_pane == CurrentPane::ApiPaths {
@@ -195,24 +223,19 @@ fn render_paths(f: &mut Frame, selected_path: &usize, app: &App, render_area: Re
     // ANCHOR_END: bottom_right_block
 }
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
-fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
-    // Cut the given rectangle into three vertical pieces
-    let popup_layout = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Percentage((100 - percent_y) / 2),
-            Constraint::Percentage(percent_y),
-            Constraint::Percentage((100 - percent_y) / 2),
-        ])
-        .split(r);
-
-    // Then cut the middle vertical piece into three width-wise pieces
-    Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage((100 - percent_x) / 2),
-            Constraint::Percentage(percent_x),
-            Constraint::Percentage((100 - percent_x) / 2),
-        ])
-        .split(popup_layout[1])[1] // Return the middle chunk
+fn result_title(app: &App) -> impl Widget {
+    let palette = tailwind::SLATE;
+    let fg = palette.c900;
+    let bg = palette.c300;
+    let keys_fg = palette.c50;
+    let keys_bg = palette.c600;
+    Line::from(vec![
+        "Tui-scrollview  ".into(),
+        "  ↓ | ↑ | PageDown | PageUp | Home | End  "
+            .fg(keys_fg)
+            .bg(keys_bg),
+        "  Quit: ".into(),
+        " Esc ".fg(keys_fg).bg(keys_bg),
+    ])
+    .style((fg, bg))
 }
